@@ -1,11 +1,13 @@
 package org.example;
 
 import org.example.config.AppConfig;
-import org.example.service.UserService;
+import org.example.model.Order;
+import org.example.service.OrderService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+/**
+ * 测试类，验证Bean装配和AOP织入效果
+ */
 public class Main {
     public static void main(String[] args) {
         //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
@@ -19,25 +21,19 @@ public class Main {
         }
 
         // 初始化Spring容器
-        AnnotationConfigApplicationContext context = 
-            new AnnotationConfigApplicationContext(AppConfig.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 
-        // 获取UserService Bean
-        UserService userService = context.getBean(UserService.class);
+        // 获取代理后的OrderService
+        OrderService orderService = context.getBean(OrderService.class);
 
-        // 测试登录功能
-        System.out.println("=== 测试登录功能 ===");
-        
-        // 测试成功登录
-        userService.login("admin", "123456");
-        
-        // 测试失败登录
-        userService.login("admin", "wrong_password");
-        
-        // 测试不存在的用户
-        userService.login("nonexistent", "password");
+        // 创建订单
+        Order order = new Order(1, "Java编程书", 2);
+        orderService.createOrder(order);
 
-        // 关闭Spring容器
+        // 查询订单
+        Order result = orderService.getOrder(1);
+        System.out.println("查询结果: " + result);
+
         context.close();
     }
 }
